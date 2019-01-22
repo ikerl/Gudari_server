@@ -8,3 +8,4 @@ ToDo List:
 5. Añadir módulo de ejecución de código porwershell para enumeración
 6. Añadir módulo de ejecución remota de binarios
 7. Añadir autenticación
+8. Permitir port forwarding concurrentes (abriendo un hilo por cada petición)
