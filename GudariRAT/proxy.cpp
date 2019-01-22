@@ -44,7 +44,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 
 	int iResult = getaddrinfo(local_host, local_port, &hints, &result);
 	if (iResult != 0) {
-		printf("getaddrinfo failed: %d\n", iResult);
+		debug("getaddrinfo failed: "+ iResult);
 		WSACleanup();
 		return;
 	}
@@ -57,7 +57,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 
 	/* Connect to the host */
 	if (ListenSocket == INVALID_SOCKET) {
-		printf("Error at socket(): %ld\n", WSAGetLastError());
+		debug("Error at socket(): "+ WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		return;
@@ -66,7 +66,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 	// Setup the TCP listening socket
 	iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
 	if (iResult == SOCKET_ERROR) {
-		printf("bind failed with error: %d\n", WSAGetLastError());
+		debug("bind failed with error: "+ WSAGetLastError());
 		freeaddrinfo(result);
 		closesocket(ListenSocket);
 		WSACleanup();
@@ -76,7 +76,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 	freeaddrinfo(result);
 
 	if (listen(ListenSocket, SOMAXCONN) == SOCKET_ERROR) {
-		printf("Listen failed with error: %ld\n", WSAGetLastError());
+		debug("Listen failed with error: "+ WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
@@ -94,12 +94,12 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 		// Accept a client socket
 		ClientSocket = accept(ListenSocket, NULL, NULL);
 		if (ClientSocket == INVALID_SOCKET) {
-			printf("accept failed: %d\n", WSAGetLastError());
+			debug("accept failed: "+ WSAGetLastError());
 			closesocket(ListenSocket);
 			WSACleanup();
 			return;
 		}
-		printf("[+] New connection accepted\n");
+		debug("[+] New connection accepted\n");
 
 		if (master > ClientSocket) {
 			max_sock = master;
@@ -114,7 +114,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 			FD_SET(master, &set);
 			FD_SET(ClientSocket, &set);
 			if (select(max_sock + 1, &set, NULL, NULL, NULL) == -1) {
-				perror("select");
+				//perror("select");
 				break;
 			}
 			if (FD_ISSET(master, &set)) {
@@ -124,7 +124,7 @@ void BindHandle(int master, const char *local_host, const char *local_port)
 				disconnected = transfer(ClientSocket, master);
 			}
 		}
-		printf("[-] Connection closed\n");
+		debug("[-] Connection closed\n");
 		closesocket(ClientSocket);
 	}
 	closesocket(master);
@@ -145,7 +145,7 @@ void ReverseHandle(int master, const char *local_host, const char *local_port)
 
 	int iResult = getaddrinfo(local_host, local_port, &hints, &result);
 	if (iResult != 0) {
-		printf("getaddrinfo failed: %d\n", iResult);
+		debug("getaddrinfo failed: "+ iResult);
 		WSACleanup();
 		return;
 	}
@@ -160,7 +160,7 @@ void ReverseHandle(int master, const char *local_host, const char *local_port)
 	ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
 	if (ConnectSocket == INVALID_SOCKET) {
-		printf("Error at socket(): %ld\n", WSAGetLastError());
+		debug("Error at socket(): "+ WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		return;
@@ -176,7 +176,7 @@ void ReverseHandle(int master, const char *local_host, const char *local_port)
 	freeaddrinfo(result);
 
 	if (ConnectSocket == INVALID_SOCKET) {
-		printf("Unable to connect to server!\n");
+		debug("Unable to connect to server!");
 		WSACleanup();
 		return;
 	}
@@ -196,7 +196,7 @@ void ReverseHandle(int master, const char *local_host, const char *local_port)
 		FD_SET(master, &set);
 		FD_SET(ConnectSocket, &set);
 		if (select(max_sock + 1, &set, NULL, NULL, NULL) == -1) {
-			perror("select");
+			//perror("select");
 			break;
 		}
 		if (FD_ISSET(master, &set)) {
@@ -218,7 +218,7 @@ int bindForward(const char *local_host, const char *local_port, const char *remo
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != 0) {
-		printf("WSAStartup failed: %d\n", iResult);
+		debug("WSAStartup failed: "+ iResult);
 		return 1;
 	}
 	struct addrinfo *result = NULL, *ptr = NULL, hints;
@@ -232,7 +232,7 @@ int bindForward(const char *local_host, const char *local_port, const char *remo
 
 	iResult = getaddrinfo(remote_host, remote_port, &hints, &result);
 	if (iResult != 0) {
-		printf("Error en el forward: %d\n", iResult);
+		debug("Error en el forward: "+ iResult);
 		WSACleanup();
 		return 1;
 	}
@@ -247,7 +247,7 @@ int bindForward(const char *local_host, const char *local_port, const char *remo
 	ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 	
 	if (ConnectSocket == INVALID_SOCKET) {
-		printf("Error at socket(): %ld\n", WSAGetLastError());
+		debug("Error at socket(): "+ WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		return 1;
@@ -256,7 +256,7 @@ int bindForward(const char *local_host, const char *local_port, const char *remo
 
 	/* Enable the socket to reuse the address */
 	if (setsockopt(ConnectSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuseaddr, sizeof(int)) < 0) {
-		perror("setsockopt");
+		//perror("setsockopt");
 		freeaddrinfo(result);
 		return 1;
 	}
@@ -273,7 +273,7 @@ int bindForward(const char *local_host, const char *local_port, const char *remo
 
 	if (ConnectSocket == INVALID_SOCKET) 
 	{
-		printf("Unable to connect to server!\n");
+		debug("Unable to connect to server!");
 		WSACleanup();
 		return 1;
 	}

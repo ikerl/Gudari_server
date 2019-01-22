@@ -9,3 +9,4 @@ int moduloSPAWN(std::vector<std::string> v, CORE core);
 int moduloDOWNLOAD(std::vector<std::string> v, CORE core);
 int moduloUPLOAD(std::vector<std::string> v, CORE core);
 int moduloFORWARD(std::vector<std::string> v, CORE core);
+int moduloPOWERSHELL(std::vector<std::string> v, CORE core);

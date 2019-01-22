@@ -12,7 +12,7 @@ int CORE::conectar()
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != 0)
 	{
-		printf("[-] WSAStartup failed with error: %d\n", iResult);
+		debug("[-] WSAStartup failed with error: "+ iResult);
 		return 1;
 	}
 
@@ -25,7 +25,7 @@ int CORE::conectar()
 	iResult = getaddrinfo((PCSTR)(char*)_ip.c_str(), std::to_string(_puerto).c_str(), &hints, &result);
 	if (iResult != 0)
 	{
-		printf("[-] No se ha podido procesar la direccion: %d\n", iResult);
+		debug("[-] No se ha podido procesar la direccion: "+ iResult);
 		WSACleanup();
 		return 1;
 	}
@@ -38,7 +38,7 @@ int CORE::conectar()
 		ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 		if (ConnectSocket == INVALID_SOCKET)
 		{
-			printf("[-] Error de socket: %ld\n", WSAGetLastError());
+			debug("[-] Error de socket: "+ WSAGetLastError());
 			WSACleanup();
 			return 1;
 		}

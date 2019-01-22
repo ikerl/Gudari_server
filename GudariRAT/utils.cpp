@@ -2,7 +2,7 @@
 
 void debug(std::string mensaje)
 {
-	std::cout << mensaje;
+	//std::cout << mensaje;
 }
 
 const std::vector<std::string> explode(const std::string& s, const char& c)
@@ -33,7 +33,7 @@ std::string exec(const char* cmd)
 	}
 	return result;
 }
-
+/*
 void showVector(std::vector<std::string> v)
 {
 	debug("[+]El vector contiene:\n => ");
@@ -41,4 +41,5 @@ void showVector(std::vector<std::string> v)
 		std::cout << ' ' << v[i];
 	std::cout << '\n';
 }
+*/
 
