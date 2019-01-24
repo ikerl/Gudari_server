@@ -7,7 +7,7 @@
 #include "stdafx.h"
 
 #define BACKLOG  10      /* Passed to listen() */
-#define BUF_SIZE 4096    /* Buffer for  transfers */
+#define BUF_SIZE 4096   /* Buffer for  transfers */
 
 unsigned int transfer(int from, int to)
 {

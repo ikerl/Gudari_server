@@ -68,7 +68,16 @@ int CORE::conectar()
 int CORE::mandar(std::string sendbuf)
 {
 	// Send an initial buffer
-	iResult = send(ConnectSocket, sendbuf.c_str(), (int)strlen(sendbuf.c_str()), 0);
+	if (rc4Cifrado)
+	{
+		unsigned char * encrypted;
+		rc4((unsigned char*)sendbuf.c_str(), _password, encrypted);
+		iResult = send(ConnectSocket, (const char*)encrypted, (int)strlen(sendbuf.c_str()), 0);
+	}
+	else
+	{
+		iResult = send(ConnectSocket, sendbuf.c_str(), (int)strlen(sendbuf.c_str()), 0);
+	}		
 	if (iResult == SOCKET_ERROR) {
 		debug("[-] Error en transmision: " + WSAGetLastError());
 		closesocket(ConnectSocket);
@@ -83,20 +92,41 @@ int CORE::mandar(std::string sendbuf)
 std::string CORE::recibir()
 {
 	SecureZeroMemory(recvbuf, recvbuflen);
-	iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-	if (iResult > 0)
-	{
-		//recvbuf[iResult] = '\0';
-		//printf("[+] Orden recibida: %s\n",recvbuf);
+	std::string operation;
+	unsigned char* decrypted = nullptr;
+	decrypted = (unsigned char*)malloc(1048);
+	SecureZeroMemory(decrypted, 1048);
 
-		std::string operation(recvbuf);
-		ultimoMensaje = operation;
-		return operation;
+	if (rc4Cifrado)
+	{
+		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+		std::cout << "[+] Mensaje recibido: " << decrypted << std::endl;
+		rc4((unsigned char*)recvbuf, _password, decrypted);
+		std::cout << "[+] Mensaje descifrado: " << decrypted << std::endl;
+		if (iResult > 0)
+		{
+			operation = std::string((char*)decrypted);
+		}
+		else if (iResult == 0)
+			debug("[-] Conexion cerrada\n");
+		else
+			debug("[-] Error de recepcion: " + WSAGetLastError());
 	}
-	else if (iResult == 0)
-		debug("[-] Conexion cerrada\n");
 	else
-		debug("[-] Error de recepcion: " + WSAGetLastError());
+	{
+		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+		if (iResult > 0)
+		{
+			std::string operation(recvbuf);
+		}
+		else if (iResult == 0)
+			debug("[-] Conexion cerrada\n");
+		else
+			debug("[-] Error de recepcion: " + WSAGetLastError());
+	}
+
+	ultimoMensaje = operation;
+	return operation;
 
 	// cleanup
 	closesocket(ConnectSocket);
@@ -120,7 +150,18 @@ void CORE::clearLastMSG()
 	ultimoMensaje = "";
 }
 
+unsigned char * CORE::getPass()
+{
+	return _password;
+}
+
 addrinfo* CORE::getResult()
 {
 	return result;
+}
+
+void CORE::setPass(unsigned char * password)
+{
+	_password = password;
+	rc4Cifrado = true;
 }
