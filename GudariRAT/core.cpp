@@ -71,7 +71,8 @@ int CORE::mandar(std::string sendbuf)
 	if (rc4Cifrado)
 	{
 		unsigned char * encrypted;
-		rc4((unsigned char*)sendbuf.c_str(), _password, encrypted);
+		//rc4((unsigned char*)sendbuf.c_str(), _password, encrypted);
+		rc4crypt((unsigned char*)sendbuf.c_str(), _password, encrypted);
 		iResult = send(ConnectSocket, (const char*)encrypted, (int)strlen(sendbuf.c_str()), 0);
 	}
 	else
@@ -93,15 +94,15 @@ std::string CORE::recibir()
 {
 	SecureZeroMemory(recvbuf, recvbuflen);
 	std::string operation;
-	unsigned char* decrypted = nullptr;
+	byte* decrypted = nullptr;
 	decrypted = (unsigned char*)malloc(1048);
 	SecureZeroMemory(decrypted, 1048);
 
 	if (rc4Cifrado)
 	{
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-		std::cout << "[+] Mensaje recibido: " << decrypted << std::endl;
-		rc4((unsigned char*)recvbuf, _password, decrypted);
+		//std::cout << "[+] Mensaje cifrado: " << recvbuf << std::endl;
+		rc4decrypt((byte*)recvbuf, _password, decrypted, 1024);
 		std::cout << "[+] Mensaje descifrado: " << decrypted << std::endl;
 		if (iResult > 0)
 		{
