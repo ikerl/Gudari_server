@@ -84,7 +84,7 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 	int tamanoFinal = TotalSize + numBloques * 2 + 1;
 	unsigned char* tempFinal = new unsigned char[(int)strlen((char *)ByteInput) + numBloques*2 + 1];
 	int totalCifrado = 0;
-	int bloquesRecorridos = 1;
+	int bloquesRecorridos = 0;
 	
 	while (totalCifrado < TotalSize)
 	{
@@ -119,7 +119,9 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 					temp[tmp] = s[t] ^ ByteInput[tmp + totalCifrado];
 			}
 			temp[tmp] = '\0';
-			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2, temp, TotalSize-totalCifrado);
+			int ultimoBloque = TotalSize - totalCifrado;
+			memcpy(tempFinal + bloquesRecorridos * 2 + totalCifrado, &ultimoBloque, 2);
+			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2 + 2, temp, TotalSize-totalCifrado+2);
 
 			break;
 		}
@@ -155,13 +157,13 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 			}
 			//temp[tmp] = '\0';
 
-			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2, temp, 1024);
+			memcpy(tempFinal + totalCifrado + bloquesRecorridos * 2, &stageSize, 2);
+			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2 + 2, temp, 1024);
 			totalCifrado += stageSize;
 			bloquesRecorridos++;
 		}
 	}
 	
-	memcpy(tempFinal, &tamanoFinal, 2);
 	ByteOutput = tempFinal;
 
 }

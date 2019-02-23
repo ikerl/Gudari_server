@@ -73,7 +73,8 @@ int CORE::mandar(std::string sendbuf)
 		unsigned char * encrypted;
 		//rc4((unsigned char*)sendbuf.c_str(), _password, encrypted);
 		rc4crypt((unsigned char*)sendbuf.c_str(), _password, encrypted);
-		iResult = send(ConnectSocket, (const char*)encrypted, (int)strlen(sendbuf.c_str())+1, 0);
+		int numeroBloques = (int)(strlen(sendbuf.c_str())/1024) + 1;
+		iResult = send(ConnectSocket, (const char*)encrypted, (int)strlen(sendbuf.c_str()) + numeroBloques*2, 0);
 	}
 	else
 	{
@@ -121,7 +122,7 @@ std::string CORE::recibir()
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			std::string operation(recvbuf);
+			operation = std::string((char*)recvbuf);
 		}
 		else if (iResult == 0)
 			debug("[-] Conexion cerrada\n");
