@@ -2,7 +2,7 @@
 
 void debug(std::string mensaje)
 {
-	std::cout << mensaje;
+	std::cout << mensaje << std::endl;
 }
 
 const std::vector<std::string> explode(const std::string& s, const char& c)
@@ -80,8 +80,11 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 	int stageSize = 1024; // Size of encryptation block
 	int TotalSize = (int)strlen((char *)ByteInput);
 	unsigned char* temp;
-	unsigned char* tempFinal = new unsigned char[(int)strlen((char *)ByteInput) + 1];
+	int numBloques = (int)(TotalSize / 1024);
+	int tamanoFinal = TotalSize + numBloques * 2 + 1;
+	unsigned char* tempFinal = new unsigned char[(int)strlen((char *)ByteInput) + numBloques*2 + 1];
 	int totalCifrado = 0;
+	int bloquesRecorridos = 1;
 	
 	while (totalCifrado < TotalSize)
 	{
@@ -116,7 +119,7 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 					temp[tmp] = s[t] ^ ByteInput[tmp + totalCifrado];
 			}
 			temp[tmp] = '\0';
-			memcpy(tempFinal + totalCifrado, temp, TotalSize-totalCifrado);
+			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2, temp, TotalSize-totalCifrado);
 
 			break;
 		}
@@ -150,12 +153,15 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 				else
 					temp[tmp] = s[t] ^ ByteInput[tmp+totalCifrado];
 			}
-			temp[tmp] = '\0';
+			//temp[tmp] = '\0';
 
-			memcpy(tempFinal + totalCifrado, temp, 1024);
+			memcpy(tempFinal + totalCifrado + bloquesRecorridos*2, temp, 1024);
 			totalCifrado += stageSize;
+			bloquesRecorridos++;
 		}
 	}
+	
+	memcpy(tempFinal, &tamanoFinal, 2);
 	ByteOutput = tempFinal;
 
 }
@@ -177,7 +183,6 @@ void rc4decrypt(byte * ByteInput, unsigned char * pwd, byte *& ByteOutput, int b
 	temp = new byte[buflen + 1];
 	i = j = 0;
 	for (tmp = 0; tmp<buflen; tmp++) {
-		std::cout << "Byte: " << ByteInput[tmp] << std::endl;
 		i = (i + 1) % 256;
 		j = (j + s[i]) % 256;
 		tmp2 = s[i];
@@ -188,7 +193,7 @@ void rc4decrypt(byte * ByteInput, unsigned char * pwd, byte *& ByteOutput, int b
 			temp[tmp] = ByteInput[tmp];
 		else
 			temp[tmp] = s[t] ^ ByteInput[tmp];
-		std::cout << "DByte: " << temp[tmp] << std::endl;
+		//std::cout << "DByte: " << temp[tmp] << std::endl;
 	}
 	temp[tmp] = '\0';
 	ByteOutput = temp;
