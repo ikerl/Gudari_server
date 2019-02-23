@@ -13,7 +13,5 @@ Funcionalidades:
  Futuros:
   1. Transferencia de ficheros no bloqueante (segundo plano)
   2. Añadirle colores en el cliente
-  3. Interprete de scripts
-    3.1 Módulos de gestión de claves de registro
-    3.3 Módulos de enumeración. (procesos, puertos de escucha, versiones, usuario, etc...)
+  3. Interprete de scripts (módulos de claves de regsitro, puertos escucha, procesos, versiones, usuarios, etc..)
   4. Transferencia de ficheros cifrados con XOR
