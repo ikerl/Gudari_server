@@ -16,3 +16,4 @@ Funcionalidades:
   3. Interprete de scripts
     3.1 Módulos de gestión de claves de registro
     3.3 Módulos de enumeración. (procesos, puertos de escucha, versiones, usuario, etc...)
+  4. Transferencia de ficheros cifrados con XOR
