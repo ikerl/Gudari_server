@@ -12,6 +12,6 @@ Funcionalidades:
   
  Futuros:
   1. Transferencia de ficheros no bloqueante (segundo plano)
-  2. Añadirle colores en el cliente
+  2. Encapsular la conexión principal sobre http
   3. Interprete de scripts (módulos de claves de regsitro, puertos escucha, procesos, versiones, usuarios, etc..)
   4. Transferencia de ficheros cifrados con XOR
