@@ -2,7 +2,7 @@
 
 void debug(std::string mensaje)
 {
-	std::cout << mensaje << std::endl;
+	//std::cout << mensaje << std::endl;
 }
 
 const std::vector<std::string> explode(const std::string& s, const char& c)
@@ -90,7 +90,7 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 	{
 		if (TotalSize - totalCifrado < 1024)
 		{
-			std::cout << "Cifrando.. " << TotalSize - totalCifrado << std::endl;
+			//std::cout << "Cifrando.. " << TotalSize - totalCifrado << std::endl;
 			temp = new unsigned char[TotalSize - totalCifrado + 1];
 
 			int i, j = 0, t, tmp, tmp2, s[256], k[256];
@@ -127,7 +127,7 @@ void rc4crypt(unsigned char * ByteInput, unsigned char * pwd, unsigned char *& B
 		}
 		else
 		{
-			std::cout << "Cifrando.. " << stageSize << std::endl;
+			//std::cout << "Cifrando.. " << stageSize << std::endl;
 			temp = new unsigned char[1024 + 1];
 
 			int i, j = 0, t, tmp, tmp2, s[256], k[256];

@@ -105,9 +105,9 @@ std::string CORE::recibir()
 		//std::cout << "[+] Mensaje cifrado: " << recvbuf << std::endl;
 		int bufSize = recvbuf[0] | recvbuf[1] << 8;
 
-		std::cout << bufSize << std::endl;
+		//std::cout << bufSize << std::endl;
 		rc4decrypt((byte*)(recvbuf+2), _password, decrypted, bufSize);
-		std::cout << "[+] Mensaje descifrado: " << decrypted << std::endl;
+		//std::cout << "[+] Mensaje descifrado: " << decrypted << std::endl;
 		if (iResult > 0)
 		{
 			operation = std::string((char*)decrypted);
